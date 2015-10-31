@@ -13,16 +13,11 @@ public class Map {
     TiledMap tiledMap;
     public OrthographicCamera camera;
     public OrthogonalTiledMapRenderer tiledMapRenderer;
-    TiledMapTileLayer[] arclCollisionLayer;
-    int nMapScale;
-    int nMapNumber;
     int nTile = 32;
     TiledMapTileLayer tiledMapTileLayer;
     int nMapWidth, nMapHeight, nTileSize;
-   /* Map(OrthographicCamera _cam){
-        camera=_cam;
-    }*/
-
+    float fTouchPadHeight;
+    Thumbstick thumbstick;
 
 
     public void create() {
@@ -33,17 +28,16 @@ public class Map {
         nMapHeight = tiledMapTileLayer.getHeight() * nTile;
         nMapWidth = tiledMapTileLayer.getWidth() * nTile;
         camera = new OrthographicCamera();
-        camera.setToOrtho(true, nMapWidth, nMapHeight);
+        camera.setToOrtho(true, nMapWidth, nMapHeight + 100);
         //LibGdx coordinate systems origin is bottom left, whereas norm is upper left
         //Set cam ortho to true and flip all textureregions so origin is upper left
         camera.update();
     }
 
 
-
     public void render() {
-        Gdx.gl.glClearColor(1, 0, 0, 1);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
+        //  Gdx.gl.glClearColor(1, 0, 0, 1);
+        //Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         tiledMapRenderer.setView(camera);
         tiledMapRenderer.render();

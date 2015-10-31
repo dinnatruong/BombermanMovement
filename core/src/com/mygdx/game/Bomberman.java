@@ -10,10 +10,10 @@ public class Bomberman extends ApplicationAdapter {
 
     @Override
     public void create() {
-        map = new Map();
-        map.create();
         thumbstick = new Thumbstick();
         thumbstick.create();
+        map = new Map();
+        map.create();
 
     }
 

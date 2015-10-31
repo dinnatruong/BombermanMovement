@@ -15,7 +15,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 public class Thumbstick implements ApplicationListener {
     Stage stage;
     private SpriteBatch batch;
-    private Touchpad touchpad;
+    public Touchpad touchpad;
     private Touchpad.TouchpadStyle touchpadStyle;
     private Skin skTouchPad;
     private Drawable drwTouchbg;
@@ -24,7 +24,9 @@ public class Thumbstick implements ApplicationListener {
     private Sprite sprRect;
     private float fSpeed;
     Texture txFG;
-    Sprite sprFG;
+    Sprite sprFG, sprBG;
+    Map map;
+    float fTouchPadHeight;
 
     @Override
     public void create() {
@@ -35,8 +37,8 @@ public class Thumbstick implements ApplicationListener {
         //Set background and knob imgs
         txFG= new Texture("ThumbstickFGsmall.png");
         sprFG = new Sprite(txFG);
-        sprFG.setBounds(0,0,100,100);
-        skTouchPad.add("drwTouchbg", new Texture("ThumbstickBG.png"));
+        sprBG = new Sprite(new Texture("ThumbstickBG.png"));
+        skTouchPad.add("drwTouchbg", sprBG);
         skTouchPad.add("drwTouchpad", sprFG);
         touchpadStyle = new Touchpad.TouchpadStyle();
         //make drawables based off the skin
@@ -48,14 +50,13 @@ public class Thumbstick implements ApplicationListener {
 
         touchpad = new Touchpad(10, touchpadStyle);
         //Initiate the touchpad based on the style we just created
-        touchpad.setBounds(15, 15, 200, 200);
+        touchpad.setBounds(0, 0, 100, 100);
         //set where the touchpad will be on the screen
         stage = new Stage();
         //create the stage and add the touchpad to it
 
         stage.addActor(touchpad);
         Gdx.input.setInputProcessor(stage);
-
         //create our crappy rect that is going to move around with the touchpad
         txRect = new Texture(Gdx.files.internal("block.png"));
         sprRect = new Sprite(txRect);
@@ -72,9 +73,6 @@ public class Thumbstick implements ApplicationListener {
 
     @Override
     public void render() {
-        Gdx.gl.glClearColor(0.294f, 0.294f, 0.294f, 1f);
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-
         //Move the rect based on the knob percent
         sprRect.setX(sprRect.getX() + touchpad.getKnobPercentX()*fSpeed);
         sprRect.setY(sprRect.getY() + touchpad.getKnobPercentY()* fSpeed);
