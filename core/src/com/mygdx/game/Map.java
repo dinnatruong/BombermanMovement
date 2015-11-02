@@ -16,8 +16,11 @@ public class Map {
     int nTile = 32;
     TiledMapTileLayer tiledMapTileLayer;
     int nMapWidth, nMapHeight, nTileSize;
-    float fTouchPadHeight;
-    Thumbstick thumbstick;
+   private float fTouchPadHeight;
+    void ThumbstickHeight(float _height){
+        fTouchPadHeight=_height;
+        System.out.println(fTouchPadHeight);
+    }
 
 
     public void create() {
@@ -28,7 +31,7 @@ public class Map {
         nMapHeight = tiledMapTileLayer.getHeight() * nTile;
         nMapWidth = tiledMapTileLayer.getWidth() * nTile;
         camera = new OrthographicCamera();
-        camera.setToOrtho(true, nMapWidth, nMapHeight + 100);
+        camera.setToOrtho(true, nMapWidth, nMapHeight + fTouchPadHeight);
         //LibGdx coordinate systems origin is bottom left, whereas norm is upper left
         //Set cam ortho to true and flip all textureregions so origin is upper left
         camera.update();

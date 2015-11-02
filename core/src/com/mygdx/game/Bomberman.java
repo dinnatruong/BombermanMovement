@@ -7,14 +7,18 @@ import com.badlogic.gdx.graphics.GL20;
 public class Bomberman extends ApplicationAdapter {
     Map map;
     Thumbstick thumbstick;
+    Character character;
 
     @Override
     public void create() {
         thumbstick = new Thumbstick();
         thumbstick.create();
         map = new Map();
+        map.ThumbstickHeight(thumbstick.sprFG.getHeight()*2);
         map.create();
-
+        System.out.println(thumbstick.touchpad.getHeight());
+        character = new Character();
+        character.create();
     }
 
     @Override
@@ -22,6 +26,8 @@ public class Bomberman extends ApplicationAdapter {
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         map.render();
+        character.render();
         thumbstick.render();
+
     }
 }
