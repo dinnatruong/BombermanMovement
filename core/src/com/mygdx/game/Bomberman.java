@@ -11,14 +11,16 @@ public class Bomberman extends ApplicationAdapter {
 
     @Override
     public void create() {
-        thumbstick = new Thumbstick();
-        thumbstick.create();
-        map = new Map();
-        map.ThumbstickHeight(thumbstick.sprFG.getHeight()*2);
-        map.create();
-        System.out.println(thumbstick.touchpad.getHeight());
         character = new Character();
         character.create();
+        thumbstick = new Thumbstick();
+        thumbstick.create();
+        thumbstick.setCharacter(character, character.arbDirection, character.bStop);
+        map = new Map();
+        map.ThumbstickHeight(thumbstick.sprFG.getHeight() * 2);
+        map.create();
+        character.setMap(map);
+        System.out.println(thumbstick.touchpad.getHeight());
     }
 
     @Override
@@ -26,8 +28,8 @@ public class Bomberman extends ApplicationAdapter {
         Gdx.gl.glClearColor(1, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         map.render();
-        character.render();
         thumbstick.render();
+        character.render();
 
     }
 }

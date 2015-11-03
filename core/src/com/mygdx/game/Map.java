@@ -4,6 +4,7 @@ package com.mygdx.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.TiledMapTileLayer;
 import com.badlogic.gdx.maps.tiled.TmxMapLoader;
@@ -16,14 +17,20 @@ public class Map {
     int nTile = 32;
     TiledMapTileLayer tiledMapTileLayer;
     int nMapWidth, nMapHeight, nTileSize;
-   private float fTouchPadHeight;
-    void ThumbstickHeight(float _height){
-        fTouchPadHeight=_height;
+    private float fTouchPadHeight;
+    TiledMapTileLayer[] arclCollisionLayer;
+    int nCollisionLayerID = 1;
+    TiledMapTileLayer collisionObjectLayer;
+    MapObjects mapObjects;
+
+    void ThumbstickHeight(float _height) {
+        fTouchPadHeight = _height;
         System.out.println(fTouchPadHeight);
     }
 
 
     public void create() {
+
         tiledMap = new TmxMapLoader().load("bombermap.tmx");
         tiledMapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
         tiledMapTileLayer = (TiledMapTileLayer) tiledMap.getLayers().get(0);
@@ -35,6 +42,12 @@ public class Map {
         //LibGdx coordinate systems origin is bottom left, whereas norm is upper left
         //Set cam ortho to true and flip all textureregions so origin is upper left
         camera.update();
+        collisionObjectLayer = (TiledMapTileLayer) tiledMap.getLayers().get(1);
+        mapObjects = collisionObjectLayer.getObjects();
+      /*  arclCollisionLayer = new TiledMapTileLayer[tiledMap.getLayers().getCount()];
+        for (int i = 0; i < tiledMap.getLayers().getCount(); i++) {//Put all the layers from the map into the collision layer array
+            arclCollisionLayer[i] = (TiledMapTileLayer) tiledMap.getLayers().get(i);
+        }*/
     }
 
 

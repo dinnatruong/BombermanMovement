@@ -6,26 +6,46 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.maps.objects.RectangleMapObject;
+import com.badlogic.gdx.math.Intersector;
+import com.badlogic.gdx.math.Rectangle;
+
+//import java.awt.Rectangle;
 
 /**
  * Created by Justin on 2015-11-02.
  */
+//http://stackoverflow.com/questions/20063281/libgdx-collision-detection-with-tiledmap
+    //box2d collision w/ rectangles. (i hope).
 public class Character {
     SpriteBatch batch;
     TextureAtlas taBomberman;
     Sprite[] spBomberman;
     int i = 0, nCurrentIndex;
     Animation animFront, animBack, animRight, animLeft;
-    float stateTime;
+    float stateTime, fCharacterVelocityX = 0, fCharacterVelocityY = 0, fCharacterX, fCharacterY;
+    int nVelocityX, nVelocityY;
     TextureRegion currentFrame;
     TextureRegion[] atrFront, atrBack, atrLeft, atrRight;
     boolean[] arbDirection = new boolean[4];//0=up, 1=down, 2=right, 3=left
-    boolean bStop = true;
-    Sprite sChar;
+    boolean bStop = true, bCollidedX, bCollidedY;
+    Sprite sprChar;
+    int nSHeight, nSWidth, nLayerCount, nTileWidth, nTileHeight;
+    Map map;
+
+    public void setMap(Map _map) {
+        map = _map;
+        nTileHeight = (int) map.tiledMapTileLayer.getTileHeight();
+        nTileWidth = (int) map.tiledMapTileLayer.getTileWidth();
+    }
 
     public void create() {
+        nSHeight = Gdx.graphics.getHeight(); //use to make scaling
+        nSWidth = Gdx.graphics.getWidth();
+        nVelocityX = nSWidth * 10 / 1794;
+        nVelocityY = nSHeight * 10 / 1080;
         arbDirection[0] = true;
-       // Gdx.input.setInputProcessor(this);
+        // Gdx.input.setInputProcessor(this);
         batch = new SpriteBatch();
         //Create an array sprites loaded from the TextureAtlas
         taBomberman = new TextureAtlas(Gdx.files.internal("bomberchar.pack"));
@@ -57,15 +77,37 @@ public class Character {
         stateTime = 0f;
     }
 
+
+    public void setCharacterVelocity(int _nVx, int _nVy) {
+        fCharacterVelocityX = nVelocityX * _nVx;
+        fCharacterVelocityY = nVelocityY * _nVy;
+    }
+
+   /* public boolean getTileID(float fX, float fY, int nWidth, String sID) {
+        boolean bCollided = false;
+        for (nLayerCount = 0; nLayerCount < map.tiledMap.getLayers().getCount() - 1; nLayerCount++) {
+
+            bCollided = map.arclCollisionLayer[nLayerCount].getCell((int) ((fX + nWidth / 4) / nTileWidth), (int) (fY / nTileHeight)).getTile().getProperties().containsKey(sID);
+
+            bCollided |= map.arclCollisionLayer[nLayerCount].getCell((int) ((fX + 3 * nWidth / 4) / nTileWidth), (int) (fY / nTileHeight))
+                    .getTile().getProperties().containsKey(sID);
+
+            bCollided |= map.arclCollisionLayer[nLayerCount].getCell((int) ((fX + nWidth / 2) / nTileWidth), (int) (fY / nTileHeight))
+                    .getTile().getProperties().containsKey(sID);
+        }
+        System.out.println(bCollided);
+
+        return bCollided;
+
+    }*/
+
+
     public void render() {
         stateTime += Gdx.graphics.getDeltaTime();
-        System.out.println(stateTime);
         for (int i = 0; i < 4; i++) {//set all direction booleans to false unless it's the current direction
             if (nCurrentIndex == i) {
             } else {
                 arbDirection[i] = false;
-                //bStop = false;
-                //System.out.println(i +" : "+arbDirection[i]);
             }
         }
 
@@ -94,67 +136,29 @@ public class Character {
                 currentFrame = animRight.getKeyFrame(stateTime, true);
             }
         }
-        sChar = new Sprite(currentFrame);//Create the sprite of the character based on the current texture region
-        sChar.setX(Gdx.graphics.getWidth()/2);
+
+        for(RectangleMapObject rectangleMapObject: map.mapObjects.getByType(RectangleMapObject.class)){
+            Rectangle rectangle = rectangleMapObject.getRectangle();
+            if(Intersector.overlaps(rectangle, sprChar.getBoundingRectangle())){
+
+            }
+            if(rectangle.overlaps(sprChar.getBoundingRectangle())){
+                System.out.println("collision");
+            }
+        }
+        sprChar = new Sprite(currentFrame);//Create the sprite of the character based on the current texture region frame
+       // bCollidedX = getTileID(fCharacterX, fCharacterY, (int) sprChar.getWidth(), "1");//Did it touched a tile with the block ID
+        fCharacterX += fCharacterVelocityX / 2;
+        fCharacterY += fCharacterVelocityY / 2;
+        sprChar.setX(Gdx.graphics.getWidth() / 2);
         batch.begin();
-        sChar.draw(batch);
-        //  batch.draw(currentFrame, 50, 50);
+        batch.draw(sprChar, fCharacterX, fCharacterY);
         batch.end();
     }
 
-   /* @Override
-    public boolean keyDown(int keycode) {
-        bStop=false;
-        if (keycode == Input.Keys.UP) {
-            arbDirection[0] = true;
-            nCurrentIndex = 0;
-            System.out.println("up");
-        } else if (keycode == Input.Keys.DOWN) {
-            arbDirection[1] = true;
-            nCurrentIndex = 1;
-        } else if (keycode == Input.Keys.LEFT) {
-            arbDirection[2] = true;
-            nCurrentIndex = 2;
-        } else if (keycode == Input.Keys.RIGHT) {
-            arbDirection[3] = true;
-            nCurrentIndex = 3;
-        }
-        return false;
+    public void getBoolsBack(boolean[] _arbDirection, boolean _bStop, int _nCurrentIndex) {
+        arbDirection = _arbDirection;
+        bStop = _bStop;
+        nCurrentIndex = _nCurrentIndex;
     }
-
-    @Override
-    public boolean keyUp(int keycode) {
-        bStop = true;
-        return false;
-    }
-
-    @Override
-    public boolean keyTyped(char character) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
-        return false;
-    }
-
-    @Override
-    public boolean touchDragged(int screenX, int screenY, int pointer) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseMoved(int screenX, int screenY) {
-        return false;
-    }
-
-    @Override
-    public boolean scrolled(int amount) {
-        return false;
-    }*/
 }

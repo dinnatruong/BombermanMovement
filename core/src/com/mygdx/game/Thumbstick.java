@@ -19,6 +19,19 @@ public class Thumbstick implements ApplicationListener {
     private Drawable drwTouchpad;
     private float fSpeed;
     Sprite sprFG, sprBG;
+    Character character;
+    boolean[] arbDirections = new boolean[4];
+    boolean bStop;
+    private int nCurrentIndex;
+
+    public void setCharacter(Character _character, boolean[] _arbDirs, boolean _bStop) {
+        character = _character;
+       /* for (int i = 0; i < 4; i++) {
+            arbDirections[i] = _arbDirs[i];
+        }*/
+        arbDirections=_arbDirs;
+        bStop = _bStop;
+    }
 
     @Override
     public void create() {
@@ -48,7 +61,7 @@ public class Thumbstick implements ApplicationListener {
         stage.addActor(touchpad);
         Gdx.input.setInputProcessor(stage);
         //create our crappy rect that is going to move around with the touchpad
-      //  sprRect.setPosition(Gdx.graphics.getWidth()/2-sprRect.getWidth()/2, Gdx.graphics.getHeight()/2-sprRect.getHeight()/2);
+        //  sprRect.setPosition(Gdx.graphics.getWidth()/2-sprRect.getWidth()/2, Gdx.graphics.getHeight()/2-sprRect.getHeight()/2);
         fSpeed = 5;
         //set the default speed to multiply by when the touchpad is moved around to move the rect
     }
@@ -61,10 +74,32 @@ public class Thumbstick implements ApplicationListener {
 
     @Override
     public void render() {
-        //Move the rect based on the knob percent
-      //sprRect.setX(sprRect.getX() + touchpad.getKnobPercentX()*fSpeed);
-     //   sprRect.setY(sprRect.getY() + touchpad.getKnobPercentY()* fSpeed);
-
+        if (touchpad.getKnobPercentX() > .75) {//up,down,right,left
+            character.setCharacterVelocity(1, 0);
+            arbDirections[3]=true;
+            nCurrentIndex=3;
+            bStop=false;
+        } else if (touchpad.getKnobPercentX() < -.75) {
+            character.setCharacterVelocity(-1, 0);
+            arbDirections[2]=true;
+            nCurrentIndex=2;
+            bStop=false;
+        } else if (touchpad.getKnobPercentY() > .75) {
+            character.setCharacterVelocity(0, 1);
+            arbDirections[0]=true;
+            nCurrentIndex=0;
+            bStop=false;
+        } else if (touchpad.getKnobPercentY() < -.75) {
+            character.setCharacterVelocity(0, -1);
+            arbDirections[1]=true;
+            nCurrentIndex=1;
+            bStop=false;
+        }
+        if (touchpad.getKnobPercentY() > -.75 && touchpad.getKnobPercentY() < .75 && touchpad.getKnobPercentX() > -.75 && touchpad.getKnobPercentX() < .75) {
+            character.setCharacterVelocity(0, 0);
+            bStop=true;
+        }
+        character.getBoolsBack(arbDirections,bStop, nCurrentIndex);
         stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
 
