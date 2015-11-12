@@ -26,9 +26,6 @@ public class Thumbstick implements ApplicationListener {
 
     public void setCharacter(Character _character, boolean[] _arbDirs, boolean _bStop) {
         character = _character;
-       /* for (int i = 0; i < 4; i++) {
-            arbDirections[i] = _arbDirs[i];
-        }*/
         arbDirections=_arbDirs;
         bStop = _bStop;
     }
@@ -100,7 +97,6 @@ public class Thumbstick implements ApplicationListener {
             bStop=true;
         }
         character.getBoolsBack(arbDirections,bStop, nCurrentIndex);
-        stage.act(Gdx.graphics.getDeltaTime());
         stage.draw();
 
     }

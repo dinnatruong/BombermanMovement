@@ -6,17 +6,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
-import com.badlogic.gdx.maps.objects.RectangleMapObject;
-import com.badlogic.gdx.math.Intersector;
-import com.badlogic.gdx.math.Rectangle;
 
 //import java.awt.Rectangle;
 
 /**
  * Created by Justin on 2015-11-02.
  */
-//http://stackoverflow.com/questions/20063281/libgdx-collision-detection-with-tiledmap
-    //box2d collision w/ rectangles. (i hope).
 public class Character {
     SpriteBatch batch;
     TextureAtlas taBomberman;
@@ -28,16 +23,9 @@ public class Character {
     TextureRegion currentFrame;
     TextureRegion[] atrFront, atrBack, atrLeft, atrRight;
     boolean[] arbDirection = new boolean[4];//0=up, 1=down, 2=right, 3=left
-    boolean bStop = true, bCollidedX, bCollidedY;
+    boolean bStop = true;
     Sprite sprChar;
-    int nSHeight, nSWidth, nLayerCount, nTileWidth, nTileHeight;
-    Map map;
-
-    public void setMap(Map _map) {
-        map = _map;
-        nTileHeight = (int) map.tiledMapTileLayer.getTileHeight();
-        nTileWidth = (int) map.tiledMapTileLayer.getTileWidth();
-    }
+    int nSHeight, nSWidth;
 
     public void create() {
         nSHeight = Gdx.graphics.getHeight(); //use to make scaling
@@ -83,25 +71,6 @@ public class Character {
         fCharacterVelocityY = nVelocityY * _nVy;
     }
 
-   /* public boolean getTileID(float fX, float fY, int nWidth, String sID) {
-        boolean bCollided = false;
-        for (nLayerCount = 0; nLayerCount < map.tiledMap.getLayers().getCount() - 1; nLayerCount++) {
-
-            bCollided = map.arclCollisionLayer[nLayerCount].getCell((int) ((fX + nWidth / 4) / nTileWidth), (int) (fY / nTileHeight)).getTile().getProperties().containsKey(sID);
-
-            bCollided |= map.arclCollisionLayer[nLayerCount].getCell((int) ((fX + 3 * nWidth / 4) / nTileWidth), (int) (fY / nTileHeight))
-                    .getTile().getProperties().containsKey(sID);
-
-            bCollided |= map.arclCollisionLayer[nLayerCount].getCell((int) ((fX + nWidth / 2) / nTileWidth), (int) (fY / nTileHeight))
-                    .getTile().getProperties().containsKey(sID);
-        }
-        System.out.println(bCollided);
-
-        return bCollided;
-
-    }*/
-
-
     public void render() {
         stateTime += Gdx.graphics.getDeltaTime();
         for (int i = 0; i < 4; i++) {//set all direction booleans to false unless it's the current direction
@@ -137,17 +106,7 @@ public class Character {
             }
         }
 
-        for(RectangleMapObject rectangleMapObject: map.mapObjects.getByType(RectangleMapObject.class)){
-            Rectangle rectangle = rectangleMapObject.getRectangle();
-            if(Intersector.overlaps(rectangle, sprChar.getBoundingRectangle())){
-
-            }
-            if(rectangle.overlaps(sprChar.getBoundingRectangle())){
-                System.out.println("collision");
-            }
-        }
         sprChar = new Sprite(currentFrame);//Create the sprite of the character based on the current texture region frame
-       // bCollidedX = getTileID(fCharacterX, fCharacterY, (int) sprChar.getWidth(), "1");//Did it touched a tile with the block ID
         fCharacterX += fCharacterVelocityX / 2;
         fCharacterY += fCharacterVelocityY / 2;
         sprChar.setX(Gdx.graphics.getWidth() / 2);
